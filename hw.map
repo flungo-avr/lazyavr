@@ -24,9 +24,15 @@ ROTCW -> PE4
 ROTB -> PE5
 ROTCCW -> PE5
 
-#define INPUT_(port, ddr, pin) ddr &= 1 << pin
-#define INPUT(spec) INPUT_(spec)
-#define OUTPUT_(port, ddr, pin) ddr |= 1 << pin
-#define OUTPUT(spec) OUTPUT_(spec)
-#define WRITE_(port, ddr, pin, value) value ? port |= 1 << pin : port &= 1 << pin
-#define WRITE(spec, value) WRITE_(spec, value)
+#define OUTPUT_(port, ddr, pin)        ddr |= 1 << pin
+#define OUTPUT(spec)                   OUTPUT_(spec)
+#define INPUT_(port, ddr, pin)         ddr &= ~(1 << pin)
+#define INPUT(spec)                    INPUT_(spec)
+#define SET_(port, ddr, pin)           port |= 1 << pin
+#define SET(spec)                      SET_(spec)
+#define CLEAR_(port, ddr, pin)         port &= ~(1 << pin)
+#define CLEAR(spec)                    CLEAR_(spec)
+#define TOGGLE_(port, ddr, pin)        port ^= 1 << pin
+#define TOGGLE(spec)                   TOGGLE_(spec)
+#define WRITE_(port, ddr, pin, value)  value ? SET_(port, ddr, pin) : CLEAR_(port, ddr, pin)
+#define WRITE(spec, value)             WRITE_(spec, value)
