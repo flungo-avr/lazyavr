@@ -17,23 +17,24 @@ write() {
 header(){
   COUNT=$(echo "$*" | wc -c)
 
-  echo -n "//"
+  echo -n '/'
   local counter=0
   while [ $counter -lt $COUNT ]; do
-    echo -n '#'
+    echo -n '*'
     let counter=counter+1
   done
-  echo "#######"
+  echo '*******/'
 
-  echo "//### $* ###"
+  echo '/*** '$*' ***/'
 
-  echo -n "//"
+
+  echo -n '/'
   counter=0
   while [ $counter -lt $COUNT ]; do
-    echo -n '#'
+    echo -n '*'
     let counter=counter+1
   done
-  echo "#######"
+  echo '*******/'
 }
 
 comment(){

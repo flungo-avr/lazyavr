@@ -1,6 +1,6 @@
 all: hw.h
 
-%.h: %.sh
+%.h: %.sh c.sh %.*
 	./$<
 
 .PHONY: git-pull
