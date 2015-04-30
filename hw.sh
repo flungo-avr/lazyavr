@@ -24,11 +24,11 @@ map_hw() {
       "##"*)
         header ${line:2}
       ;;
-      "#include"*|"#define"*)
-        echo $line
-      ;;
       "# "*)
         comment ${line:2}
+      ;;
+      "#"*)
+        echo $line
       ;;
       *"->"*)
         map_line "$line"
