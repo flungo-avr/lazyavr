@@ -23,19 +23,3 @@ ROTCW -> PE4
 # ROTB: Rotary encoder switch (anti-clockwise)
 ROTB -> PE5
 ROTCCW -> PE5
-
-## Macros
-# Set pin mode
-#define OUTPUT_(port, ddr, pin)        ddr |= 1 << pin
-#define OUTPUT(spec)                   OUTPUT_(spec)
-#define INPUT_(port, ddr, pin)         ddr &= ~(1 << pin)
-#define INPUT(spec)                    INPUT_(spec)
-
-# Set or clear pin
-# (also used to toggle pull up resistor on inputs)
-#define SET_(port, ddr, pin)           port |= 1 << pin
-#define SET(spec)                      SET_(spec)
-#define CLEAR_(port, ddr, pin)         port &= ~(1 << pin)
-#define CLEAR(spec)                    CLEAR_(spec)
-#define TOGGLE_(port, ddr, pin)        port ^= 1 << pin
-#define TOGGLE(spec)                   TOGGLE_(spec)
