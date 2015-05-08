@@ -1,3 +1,6 @@
+#ifndef LAZYAVR_DIGITALIOH
+#define LAZYAVR_DIGITALIOH
+
 /* Mode setting macros */
 #define OUTPUT_(port, ddr, pin)        ddr |= 1 << pin
 #define OUTPUT(spec)                   OUTPUT_(spec)
@@ -11,3 +14,5 @@
 #define CLEAR(spec)                    CLEAR_(spec)
 #define TOGGLE_(port, ddr, pin)        port ^= 1 << pin
 #define TOGGLE(spec)                   TOGGLE_(spec)
+
+#endif

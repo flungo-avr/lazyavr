@@ -1,5 +1,3 @@
-#include <avr/io.h>
-
 ## Hardware Output Mappings
 # LED: On board LED
 LED -> PB7

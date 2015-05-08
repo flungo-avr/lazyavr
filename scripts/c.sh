@@ -20,31 +20,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# C Generation helper script
-CHELP_SCRIPT    = scripts/c.sh
-# HW Mapping Script
-HWMAP_SCRIPT    = scripts/hwmap.sh
+# Helper script for automation of c header files.
 
-# For all .map files in platforms, a header will be generated
-MAPS            = $(wildcard platforms/*.map)
-MAPPING_HEADERS = $(addsuffix .h, $(MAPS))
+arg_check(){
+  [[ $# > $1 ]] ||  >&2 echo "Expected $1 arguments, but got $(($# - 1))" && exit 1;
+}
 
-# Generate all components
-all: $(MAPPING_HEADERS)
+# Initialise the file (Make it blank)
+init(){
+  echo -n > $1
+}
 
-# HW Mapping Script depends on C Generation helper script
-$(HWMAP_SCRIPT): | $(CHELP_SCRIPT)
+write() {
+  arg_check 2
+  echo "$*"
+}
 
-# Create a .map.h from the .map
-platforms/%.map.h: platforms/%.map | $(HWMAP_SCRIPT)
-	$(HWMAP_SCRIPT) "$<"
+header(){
+  COUNT=$(echo "$*" | wc -c)
 
-.PHONY: clean
+  echo -n '/'
+  local counter=0
+  while [ $counter -lt $COUNT ]; do
+    echo -n '*'
+    let counter=counter+1
+  done
+  echo '*******/'
 
-clean:
-	rm -rf $(MAPPING_HEADERS)
+  echo '/*** '$*' ***/'
 
-.PHONY: git-pull
 
-git-pull:
-	git pull
+  echo -n '/'
+  counter=0
+  while [ $counter -lt $COUNT ]; do
+    echo -n '*'
+    let counter=counter+1
+  done
+  echo '*******/'
+}
+
+comment(){
+  echo "// ${@:2}"
+}

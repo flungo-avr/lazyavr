@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # The MIT License (MIT)
 #
 # Copyright (c) 2015 Fabrizio Lungo <fab@lungo.co.uk>
@@ -20,31 +22,52 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# C Generation helper script
-CHELP_SCRIPT    = scripts/c.sh
-# HW Mapping Script
-HWMAP_SCRIPT    = scripts/hwmap.sh
+SOURCE_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
-# For all .map files in platforms, a header will be generated
-MAPS            = $(wildcard platforms/*.map)
-MAPPING_HEADERS = $(addsuffix .h, $(MAPS))
+. "${SOURCE_DIR}/c.sh"
 
-# Generate all components
-all: $(MAPPING_HEADERS)
+MAP=$1
+if [ ! -f $1 ]; then
+  >&2 echo "$1 is not a file."
+  exit 1;
+fi
 
-# HW Mapping Script depends on C Generation helper script
-$(HWMAP_SCRIPT): | $(CHELP_SCRIPT)
+OUTPUT=$1.h
 
-# Create a .map.h from the .map
-platforms/%.map.h: platforms/%.map | $(HWMAP_SCRIPT)
-	$(HWMAP_SCRIPT) "$<"
+init $OUTPUT
 
-.PHONY: clean
+map_line() {
+  local ALIAS=$(echo $1 | cut -d'-' -f 1 | awk '{$1=$1}{ print }')
+  local NAME=$(echo $1 | cut -d'>' -f 2 | awk '{$1=$1}{ print }')
+  local PORT=${NAME:1:1}
+  local PIN=${NAME:2:1}
+  echo "#define ${ALIAS}_PORT PORT${PORT}"
+  echo "#define ${ALIAS}_DDR  DDR${PORT}"
+  echo "#define ${ALIAS}_PIN  P${PORT}${PIN}"
+  echo "#define ${ALIAS}      ${ALIAS}_PORT, ${ALIAS}_DDR, ${ALIAS}_PIN"
+}
 
-clean:
-	rm -rf $(MAPPING_HEADERS)
+map_hw() {
 
-.PHONY: git-pull
+  cat $MAP | while read line; do
+    case $line in
+      "##"*)
+        header ${line:2}
+      ;;
+      "# "*)
+        comment ${line:2}
+      ;;
+      "#"*)
+        echo $line
+      ;;
+      *"->"*)
+        map_line "$line"
+      ;;
+      "")
+        echo
+      ;;
+    esac
+  done
+}
 
-git-pull:
-	git pull
+map_hw > $OUTPUT
